@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Websocketg</title>
+</head>
+<body>
+    <h1>Echo Test</h1>
+    <input id="sendTxt" type = "text">
+    <button id = "sendBtn">发送</button>
+    <div id = "recv"}></div>
+    <script type = "text/javascript">
+        //建立一个websocket连接，ws://echo.websocket.org/为别人搭建的websocket service
+        //在F12之后里的Network中的filter的WS中可以看到这个websocket服务，
+        // 每次发送数据时，里面的frames里会有两条数据，绿色的表示发送的数据，白色表示返回的数据
+        var websocket = new WebSocket("ws://echo.websocket.org/");
+        //websocket打开
+        websocket.onopen = function () {
+            console.log('websocket open')
+            document.getElementById("recv").innerHTML = "Connected"
+        }
+        //websocket关闭
+        websocket.onclose = function () {
+            console.log('websocket close')
+        }
+        //当websocket接收到参数的时候的回调
+        //数据存在参数的data里
+        websocket.onmessage = function (e) {
+            console.log(e.data)
+            document.getElementById("recv").innerHTML = e.data;
+        }
+        document.getElementById("sendBtn").onclick = function () {
+            var txt = document.getElementById("sendTxt").value;
+            //通过send方法将数据发送给ws://echo.websocket.org/地址，并且全封不动的返回回来，通过onmessage方法可接收发送成功的回调
+            websocket.send(txt)
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Websocketg</title>
+</head>
+<body>
+    <h1>聊天室</h1>
+    <input id="sendTxt" type = "text">
+    <button id = "sendBtn">发送</button>
+    <script type = "text/javascript">
+        var websocket = new WebSocket("ws://localhost:3000/");
+        //websocket打开
+        function showMessage(value,type) {
+            var div = document.createElement('div')
+            if (type == 'enter'){
+                div.style.color = "green"
+            }else if (type == 'left'){
+                div.style.color = 'red'
+            }
+            div.innerHTML = value;
+            document.body.appendChild(div)
+        }
+        websocket.onopen = function () {
+            console.log('websocket open')
+            document.getElementById("sendBtn").onclick = function () {
+                var txt = document.getElementById("sendTxt").value;
+                if (txt){
+                    websocket.send(txt)
+                }
+            }
+            document.body.onkeydown = function (event) {
+                if (event.keyCode == "13") {
+                    document.getElementById("sendBtn").onclick();
+                }
+            };
+        }
+        //websocket关闭
+        websocket.onclose = function () {
+            console.log('websocket close')
+        }
+        //当websocket接收到参数的时候的回调
+        //数据存在参数的data里
+        websocket.onmessage = function (e) {
+            console.log(e.data)
+            var mes = JSON.parse(e.data)
+            showMessage(mes.value,mes.type)
+        }
+    </script>
+</body>
+</html>
